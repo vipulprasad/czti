@@ -1,15 +1,12 @@
 #! /usr/bin/env python3
 #Vipul
 
-# Finds orbit number corresponding that covers a time using the data quality report page.
-
 import argparse
 import pandas as pd
 import numpy as np
 import datetime as dt
 from astropy.time import Time
 import astropy.units as u
-from time import time
 
 def convert_time(time):
     time = time[0:18]
@@ -26,7 +23,6 @@ parser.add_argument("--tast",type=float,help='Trigger time in astrosat seconds')
 parser.add_argument("--tutc",type=str,help='Trigger time in UTC')
 args = parser.parse_args()
 
-run_start = time()
 if args.tast == None:
     trigtime_utc  = convert_time(args.tutc)
 else:
@@ -35,9 +31,11 @@ else:
     trigtime_utc = dt.datetime.fromtimestamp(total_seconds)#.strftime('%Y-%m-%d %H-%M-%S')
 
 data = pd.read_html("https://www.iucaa.in/~astrosat/czti_dqr/", header = 0)[0]
+data = data.dropna()
 #data.to_csv("dqr.csv")
-#data = pd.read_csv("dqr.csv")
+#data = pd.read_csv("/mnt/hdd1/astrosat/astrosat_dqr/dqr.csv")
 #data = pd.read_csv("orbitinfo.csv", names = ['Folder', 'OBSID', 'Observer', 'Object', 'RA', 'Dec', 'Exposure time', 'Date/time start', 'Date/time end'], skiprows = 1)
+
 data['Date/time start'] = data['Date/time start'].apply(convert_time)
 data['Date/time end'] = data['Date/time end'].apply(convert_time)
 
@@ -66,8 +64,4 @@ for orbit_index, row in orbit_data.loc[obs_index:].iterrows():
         print('Path {}: '.format(num), '/data2/czti/level2/'+row['Folder'][0:-6]+'/czti/orbit/'+row['Folder'][-5:], '({} - {})'.format(row['Date/time start'], row['Date/time end']))
         num+=1
 
-run_end = time()
-print(run_end - run_start)
         
-
-
