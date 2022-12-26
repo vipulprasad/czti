@@ -30,7 +30,9 @@ for folder in data['Folder']:
 
     orbit = folder[38:43]
     obs = folder[26:30] #folder[9:12]+'_'+
-    orbit_data = pd.read_html('https://www.iucaa.in/~astrosat/czti_dqr/{}/index.html'.format(folder))
+    year = folder[0:4]
+    url = 'https://www.iucaa.in/~astrosat/czti_dqr/{}/{}/index.html'.format(year, folder)
+    orbit_data = pd.read_html(url)
 
     if len(orbit_data) == 10:
         n = 5
